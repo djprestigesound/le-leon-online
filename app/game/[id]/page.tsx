@@ -124,7 +124,7 @@ export default function GamePage() {
             onClick={() => router.push('/')}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold"
           >
-            Retour à l'accueil
+            Retour à l&apos;accueil
           </button>
         </div>
       </div>
@@ -245,7 +245,7 @@ export default function GamePage() {
                   onClick={() => router.push('/')}
                   className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
                 >
-                  Retour à l'accueil
+                  Retour à l&apos;accueil
                 </button>
               </motion.div>
             )}
