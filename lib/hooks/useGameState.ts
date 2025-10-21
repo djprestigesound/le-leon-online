@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Game } from '../types/game';
 import { POLLING_INTERVAL } from '../game/constants';
 
@@ -11,12 +11,16 @@ export function useGameState(gameId: string | null) {
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchingRef = useRef(false);
 
-  const fetchGameState = useCallback(async () => {
-    if (!gameId) return;
+  const fetchGameState = async () => {
+    if (!gameId || fetchingRef.current) return;
 
+    fetchingRef.current = true;
     try {
-      const response = await fetch(`/api/games/${gameId}`);
+      const response = await fetch(`/api/games/${gameId}`, {
+        cache: 'no-store',
+      });
 
       if (!response.ok) {
         throw new Error('Impossible de récupérer l\'état de la partie');
@@ -29,8 +33,9 @@ export function useGameState(gameId: string | null) {
       setError(err.message);
     } finally {
       setLoading(false);
+      fetchingRef.current = false;
     }
-  }, [gameId]);
+  };
 
   useEffect(() => {
     if (!gameId) {
@@ -45,7 +50,7 @@ export function useGameState(gameId: string | null) {
     const interval = setInterval(fetchGameState, POLLING_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [gameId, fetchGameState]);
+  }, [gameId]); // Retirer fetchGameState des dépendances
 
   return { game, loading, error, refresh: fetchGameState };
 }

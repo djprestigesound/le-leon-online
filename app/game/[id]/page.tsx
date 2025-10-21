@@ -19,7 +19,7 @@ export default function GamePage() {
   const router = useRouter();
   const gameId = params.id as string;
 
-  const { game, loading, error } = useGameState(gameId);
+  const { game, loading, error, refresh } = useGameState(gameId);
   const { joinGame, startGame, placeBet, playCard } = useGameActions();
 
   const [myPlayerId, setMyPlayerId] = useState<string | null>(null);
@@ -53,6 +53,8 @@ export default function GamePage() {
   const handleStartGame = async () => {
     try {
       await startGame(gameId);
+      // Rafraîchir immédiatement pour voir les actions des bots
+      await refresh();
     } catch (err) {
       console.error('Error starting game:', err);
     }
@@ -63,6 +65,8 @@ export default function GamePage() {
 
     try {
       await placeBet(gameId, myPlayerId, betInput);
+      // Rafraîchir immédiatement pour voir les actions des bots
+      await refresh();
     } catch (err) {
       console.error('Error placing bet:', err);
     }
@@ -81,6 +85,8 @@ export default function GamePage() {
     // Jouer la carte normalement
     try {
       await playCard(gameId, myPlayerId, card as LeonedCard);
+      // Rafraîchir immédiatement pour voir les actions des bots
+      await refresh();
     } catch (err: any) {
       alert(err.message);
     }
@@ -101,6 +107,8 @@ export default function GamePage() {
       await playCard(gameId, myPlayerId, leonedCard);
       setShowLeonModal(false);
       setSelectedCard(null);
+      // Rafraîchir immédiatement pour voir les actions des bots
+      await refresh();
     } catch (err: any) {
       alert(err.message);
     }
