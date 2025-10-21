@@ -175,11 +175,21 @@ export function placeBet(game: Game, playerId: string, bet: number): Game {
     [playerId]: bet,
   };
 
-  const updatedPlayers = game.players.map(p =>
-    p.id === playerId ? { ...p, bet } : p
-  );
-
   const allBetsPlaced = Object.keys(updatedBets).length === game.players.length;
+
+  // Passer au joueur suivant
+  const currentPlayerIndex = game.players.findIndex(p => p.id === playerId);
+  const nextPlayerIndex = (currentPlayerIndex + 1) % game.players.length;
+
+  const updatedPlayers = game.players.map((p, index) => {
+    if (p.id === playerId) {
+      return { ...p, bet, isCurrentPlayer: false };
+    }
+    if (!allBetsPlaced && index === nextPlayerIndex) {
+      return { ...p, isCurrentPlayer: true };
+    }
+    return p;
+  });
 
   return {
     ...game,
