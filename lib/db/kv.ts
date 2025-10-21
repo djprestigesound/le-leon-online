@@ -9,8 +9,8 @@ export async function saveGameState(game: Game): Promise<void> {
   const key = `game:${game.id}`;
   const codeKey = `game:code:${game.code}`;
 
-  // Sauvegarder par ID
-  await kv.set(key, JSON.stringify(game), {
+  // Sauvegarder par ID (Vercel KV gère automatiquement la sérialisation JSON)
+  await kv.set(key, game, {
     ex: 86400, // Expire après 24h
   });
 
@@ -25,11 +25,9 @@ export async function saveGameState(game: Game): Promise<void> {
  */
 export async function getGameState(gameId: string): Promise<Game | null> {
   const key = `game:${gameId}`;
-  const data = await kv.get<string>(key);
+  const game = await kv.get<Game>(key);
 
-  if (!data) return null;
-
-  return JSON.parse(data);
+  return game;
 }
 
 /**
