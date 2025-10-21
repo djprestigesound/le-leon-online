@@ -87,7 +87,7 @@ export function GameLobby({ game, myPlayerId, onStart }: GameLobbyProps) {
                 <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
                   ?
                 </div>
-                <div className="text-gray-400">En attente d'un joueur...</div>
+                <div className="text-gray-400">En attente d&apos;un joueur...</div>
               </div>
             ))}
           </div>
@@ -96,7 +96,7 @@ export function GameLobby({ game, myPlayerId, onStart }: GameLobbyProps) {
         {/* Instructions */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800">
-            📋 Partagez le code <span className="font-mono font-bold">{game.code}</span> avec vos amis pour qu'ils rejoignent la partie !
+            📋 Partagez le code <span className="font-mono font-bold">{game.code}</span> avec vos amis pour qu&apos;ils rejoignent la partie !
           </p>
         </div>
 
@@ -120,7 +120,7 @@ export function GameLobby({ game, myPlayerId, onStart }: GameLobbyProps) {
 
         {!isHost && (
           <div className="text-center text-gray-600">
-            En attente que l'hôte démarre la partie...
+            En attente que l&apos;hôte démarre la partie...
           </div>
         )}
       </motion.div>
