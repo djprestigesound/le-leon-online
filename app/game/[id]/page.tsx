@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useGameState } from '@/lib/hooks/useGameState';
 import { useGameActions } from '@/lib/hooks/useGameActions';
-import { useBotActions } from '@/lib/hooks/useBotActions';
 import { GameLobby } from '@/components/Lobby/GameLobby';
 import { Hand } from '@/components/Game/Hand';
 import { Table } from '@/components/Game/Table';
@@ -22,9 +21,6 @@ export default function GamePage() {
 
   const { game, loading, error } = useGameState(gameId);
   const { joinGame, startGame, placeBet, playCard } = useGameActions();
-
-  // Faire jouer les bots automatiquement
-  useBotActions(game);
 
   const [myPlayerId, setMyPlayerId] = useState<string | null>(null);
   const [betInput, setBetInput] = useState<number>(0);

@@ -3,6 +3,7 @@ import { getGameState, saveGameState } from '@/lib/db/kv';
 import { playCard } from '@/lib/game/engine';
 import { saveGameHistory } from '@/lib/db/postgres';
 import { LeonedCard } from '@/lib/types/game';
+import { processBotTurns } from '@/lib/game/bot-automation';
 
 /**
  * POST /api/games/[id]/play
@@ -42,7 +43,10 @@ export async function POST(
     }
 
     // Jouer la carte
-    const updatedGame = playCard(game, playerId, card as LeonedCard);
+    let updatedGame = playCard(game, playerId, card as LeonedCard);
+
+    // Faire jouer automatiquement les bots qui suivent
+    updatedGame = processBotTurns(updatedGame);
 
     // Sauvegarder dans Redis
     await saveGameState(updatedGame);

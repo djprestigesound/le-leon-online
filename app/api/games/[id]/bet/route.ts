@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getGameState, saveGameState } from '@/lib/db/kv';
 import { placeBet } from '@/lib/game/engine';
+import { processBotTurns } from '@/lib/game/bot-automation';
 
 /**
  * POST /api/games/[id]/bet
@@ -40,7 +41,10 @@ export async function POST(
     }
 
     // Placer le pari
-    const updatedGame = placeBet(game, playerId, bet);
+    let updatedGame = placeBet(game, playerId, bet);
+
+    // Faire jouer automatiquement les bots qui suivent
+    updatedGame = processBotTurns(updatedGame);
 
     // Sauvegarder
     await saveGameState(updatedGame);

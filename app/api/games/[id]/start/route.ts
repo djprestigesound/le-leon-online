@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getGameState, saveGameState } from '@/lib/db/kv';
 import { startGame } from '@/lib/game/engine';
+import { processBotTurns } from '@/lib/game/bot-automation';
 
 /**
  * POST /api/games/[id]/start
@@ -24,7 +25,10 @@ export async function POST(
     }
 
     // Démarrer la partie
-    const updatedGame = startGame(game);
+    let updatedGame = startGame(game);
+
+    // Faire jouer automatiquement les bots si le premier joueur est un bot
+    updatedGame = processBotTurns(updatedGame);
 
     // Sauvegarder
     await saveGameState(updatedGame);
