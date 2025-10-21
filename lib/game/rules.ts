@@ -2,6 +2,16 @@ import { Card, LeonedCard, Suit, Rank, Trick, Player } from '../types/game';
 import { RANK_VALUES } from './constants';
 
 /**
+ * Retourne la valeur numérique d'une carte pour la comparaison
+ */
+export function getCardValue(card: Card): number {
+  if (card.rank === 'LEON') {
+    return 15; // Le Léon est la carte la plus forte
+  }
+  return RANK_VALUES[card.rank as Rank] || 0;
+}
+
+/**
  * Vérifie si un joueur peut jouer une carte donnée
  */
 export function canPlayCard(

@@ -16,6 +16,11 @@ export interface LeonedCard extends Card {
   };
 }
 
+export interface PlayedCard {
+  playerId: string;
+  card: LeonedCard;
+}
+
 export type GameMode = 'simplified' | 'audace' | 'securite';
 
 export type GamePhase = 'montee' | 'descente';
@@ -33,6 +38,8 @@ export interface Player {
   isDealer: boolean;
   isCurrentPlayer: boolean;
   connected: boolean;
+  isBot?: boolean;
+  botPersonality?: 'aggressive' | 'cautious' | 'balanced';
 }
 
 export interface Trick {
