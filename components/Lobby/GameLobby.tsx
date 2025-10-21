@@ -21,19 +21,69 @@ export function GameLobby({ game, myPlayerId, onStart }: GameLobbyProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-2xl p-8"
+        className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-2xl p-8 border-2 border-blue-100 relative overflow-hidden"
       >
+        {/* Effet de brillance animé */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-100/20 to-transparent"
+          animate={{ x: ['-100%', '200%'] }}
+          transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
+        />
+
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Le Léon</h1>
-          <div className="text-lg text-gray-600">Code de partie: <span className="font-mono font-bold text-2xl text-blue-600">{game.code}</span></div>
-          <div className="text-sm text-gray-500 mt-2">
-            Mode: <span className="font-semibold">
-              {game.mode === 'simplified' && 'Simplifié'}
-              {game.mode === 'audace' && 'Audace & Attaque'}
-              {game.mode === 'securite' && 'Sécurité & Défense'}
+        <div className="text-center mb-8 relative z-10">
+          <motion.div
+            className="flex items-center justify-center gap-3 mb-3"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+          >
+            <motion.span
+              className="text-4xl"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
+            >
+              🃏
+            </motion.span>
+            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+              Le Léon
+            </h1>
+            <motion.span
+              className="text-4xl"
+              animate={{ rotate: -360 }}
+              transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
+            >
+              ⭐
+            </motion.span>
+          </motion.div>
+          <motion.div
+            className="text-lg text-gray-600"
+            animate={{ scale: [1, 1.02, 1] }}
+            transition={{ repeat: Infinity, duration: 1.5 }}
+          >
+            Code de partie:{' '}
+            <motion.span
+              className="font-mono font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+              animate={{
+                backgroundPosition: ['0%', '100%', '0%']
+              }}
+              transition={{ repeat: Infinity, duration: 3 }}
+              style={{ backgroundSize: '200% auto' }}
+            >
+              {game.code}
+            </motion.span>
+          </motion.div>
+          <motion.div
+            className="text-sm text-gray-500 mt-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Mode: <span className="font-semibold text-purple-600">
+              {game.mode === 'simplified' && '🎯 Simplifié'}
+              {game.mode === 'audace' && '⚔️ Audace & Attaque'}
+              {game.mode === 'securite' && '🛡️ Sécurité & Défense'}
             </span>
-          </div>
+          </motion.div>
         </div>
 
         {/* Players */}
@@ -80,15 +130,29 @@ export function GameLobby({ game, myPlayerId, onStart }: GameLobbyProps) {
 
             {/* Slots vides */}
             {Array.from({ length: game.maxPlayers - game.players.length }).map((_, index) => (
-              <div
+              <motion.div
                 key={`empty-${index}`}
-                className="flex items-center gap-3 p-4 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  opacity: [0.5, 1, 0.5],
+                  scale: [0.98, 1, 0.98]
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2,
+                  delay: index * 0.2
+                }}
+                className="flex items-center gap-3 p-4 rounded-lg border-2 border-dashed border-gray-300 bg-gradient-to-r from-gray-50 to-gray-100"
               >
-                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
+                <motion.div
+                  className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center text-gray-500 text-xl"
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 3 }}
+                >
                   ?
-                </div>
-                <div className="text-gray-400">En attente d&apos;un joueur...</div>
-              </div>
+                </motion.div>
+                <div className="text-gray-400 font-medium">⏳ En attente d&apos;un joueur...</div>
+              </motion.div>
             ))}
           </div>
         </div>
