@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Game } from '../types/game';
 import { POLLING_INTERVAL } from '../game/constants';
 
@@ -11,25 +11,20 @@ export function useGameState(gameId: string | null) {
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const pollingRef = useRef(false); // Pour le polling automatique
-  const manualFetchRef = useRef(false); // Pour les refreshes manuels
+  const gameIdRef = useRef(gameId);
 
-  const fetchGameState = useCallback(async (isManual: boolean = false) => {
-    if (!gameId) return;
+  // Mettre à jour la ref quand gameId change
+  useEffect(() => {
+    gameIdRef.current = gameId;
+  }, [gameId]);
 
-    // Pour les refreshes manuels, ne pas bloquer même si un polling est en cours
-    // Pour le polling, ne pas exécuter si un autre polling est déjà en cours
-    if (!isManual && pollingRef.current) return;
-    if (isManual && manualFetchRef.current) return;
-
-    if (isManual) {
-      manualFetchRef.current = true;
-    } else {
-      pollingRef.current = true;
-    }
+  // Fonction de fetch stable (ne change jamais)
+  const fetchGameStateRef = useRef(async () => {
+    const currentGameId = gameIdRef.current;
+    if (!currentGameId) return;
 
     try {
-      const response = await fetch(`/api/games/${gameId}`, {
+      const response = await fetch(`/api/games/${currentGameId}`, {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache',
@@ -47,18 +42,13 @@ export function useGameState(gameId: string | null) {
       setError(err.message);
     } finally {
       setLoading(false);
-      if (isManual) {
-        manualFetchRef.current = false;
-      } else {
-        pollingRef.current = false;
-      }
     }
-  }, [gameId]);
+  });
 
-  // Fonction de refresh manuel qui force le fetch
-  const refresh = useCallback(async () => {
-    await fetchGameState(true);
-  }, [fetchGameState]);
+  // Fonction refresh exposée qui ne change jamais
+  const refreshRef = useRef(() => {
+    return fetchGameStateRef.current();
+  });
 
   useEffect(() => {
     if (!gameId) {
@@ -67,13 +57,20 @@ export function useGameState(gameId: string | null) {
     }
 
     // Première récupération
-    fetchGameState(false);
+    fetchGameStateRef.current();
 
     // Polling toutes les 2 secondes
-    const interval = setInterval(() => fetchGameState(false), POLLING_INTERVAL);
+    const interval = setInterval(() => {
+      fetchGameStateRef.current();
+    }, POLLING_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [gameId, fetchGameState]);
+  }, [gameId]); // Seulement gameId dans les dépendances
 
-  return { game, loading, error, refresh };
+  return {
+    game,
+    loading,
+    error,
+    refresh: refreshRef.current
+  };
 }
