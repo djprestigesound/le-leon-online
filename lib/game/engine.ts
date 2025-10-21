@@ -177,6 +177,10 @@ export function placeBet(game: Game, playerId: string, bet: number): Game {
 
   const allBetsPlaced = Object.keys(updatedBets).length === game.players.length;
 
+  // Trouver le distributeur et le premier joueur
+  const dealerIndex = game.players.findIndex(p => p.isDealer);
+  const firstPlayerIndex = (dealerIndex + 1) % game.players.length;
+
   // Passer au joueur suivant
   const currentPlayerIndex = game.players.findIndex(p => p.id === playerId);
   const nextPlayerIndex = (currentPlayerIndex + 1) % game.players.length;
@@ -185,6 +189,11 @@ export function placeBet(game: Game, playerId: string, bet: number): Game {
     if (p.id === playerId) {
       return { ...p, bet, isCurrentPlayer: false };
     }
+    // Si tous les paris sont placés, le joueur après le distributeur commence
+    if (allBetsPlaced && index === firstPlayerIndex) {
+      return { ...p, isCurrentPlayer: true };
+    }
+    // Sinon, continuer avec la phase de paris
     if (!allBetsPlaced && index === nextPlayerIndex) {
       return { ...p, isCurrentPlayer: true };
     }
